@@ -23,6 +23,7 @@ export class TravelScene extends Phaser.Scene {
   private grass!: Phaser.GameObjects.TileSprite;
   private scoreText!: Phaser.GameObjects.Text;
   private messageText!: Phaser.GameObjects.Text;
+  private cryDecor!: Phaser.GameObjects.Sprite;
   private hearts: Phaser.GameObjects.Arc[] = [];
   private state: RunState = 'ready';
   private distance = 0;
@@ -93,7 +94,11 @@ export class TravelScene extends Phaser.Scene {
     const shadow = { fontFamily: 'monospace', fontStyle: 'bold', stroke: '#2c2418', strokeThickness: 6 };
     this.add.text(28, 22, 'KISOTISOTY', { ...shadow, fontSize: '25px', color: '#fff4c2' }).setDepth(20);
     this.scoreText = this.add.text(28, 60, 'SCORE 00000', { ...shadow, fontSize: '18px', color: '#f2bd55' }).setDepth(20);
-    this.messageText = this.add.text(WIDTH / 2, 180, '', { ...shadow, fontSize: '25px', color: '#fff4c2', align: 'center', lineSpacing: 10 }).setOrigin(0.5).setDepth(20);
+    this.messageText = this.add.text(300, 180, '', { ...shadow, fontSize: '25px', color: '#fff4c2', align: 'center', lineSpacing: 10 }).setOrigin(0.5).setDepth(20);
+    this.cryDecor = this.add.sprite(WIDTH - 12, HEIGHT - 12, 'alefaso-maika', 0)
+      .setOrigin(1)
+      .setScale(0.8)
+      .setDepth(19);
     for (let i = 0; i < 3; i += 1) {
       this.hearts.push(this.add.circle(WIDTH - 38 - i * 42, 34, 14, 0xe63946).setStrokeStyle(4, 0x4a0f18).setDepth(20));
     }
@@ -116,11 +121,13 @@ export class TravelScene extends Phaser.Scene {
     this.updateHearts();
     this.scoreText.setText('SCORE 00000');
     this.messageText.setText('PRÊT POUR LE VOYAGE ?\nTOUCHE L’ÉCRAN POUR COMMENCER').setVisible(true);
+    this.cryDecor.setVisible(true).play('alefaso-cry');
   }
 
   private start(): void {
     this.state = 'running';
     this.messageText.setVisible(false);
+    this.cryDecor.setVisible(false).stop();
     this.playAnimation('original-run');
     this.spawnSequence();
   }
@@ -190,6 +197,7 @@ export class TravelScene extends Phaser.Scene {
       const best = Math.max(score, Number(localStorage.getItem('kisotisoty-best') ?? 0));
       localStorage.setItem('kisotisoty-best', String(best));
       this.messageText.setText(`FIN DU VOYAGE\nSCORE ${score}  •  RECORD ${best}\n\nTOUCHE POUR REJOUER`).setVisible(true);
+      this.cryDecor.setVisible(true).play('alefaso-cry');
       return;
     }
     this.invincible = true;

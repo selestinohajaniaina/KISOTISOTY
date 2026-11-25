@@ -4,6 +4,7 @@ import jumpUrl from '../assets/sprite/datoa/Jump.png';
 import runUrl from '../assets/sprite/datoa/Run.png';
 import housesUrl from '../assets/backgrounds/maisons-antananarivo-panoramique.png';
 import rovaUrl from '../assets/backgrounds/rova-cartoon-background.png';
+import alefasoUrl from '../assets/decors/alefaso-maika.png';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +12,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.spritesheet('alefaso-maika', alefasoUrl, { frameWidth: 512, frameHeight: 512, endFrame: 11 });
     this.load.image('houses', housesUrl);
     this.load.image('rova', rovaUrl);
     this.load.spritesheet('original-idle', idleUrl, { frameWidth: 512, frameHeight: 512 });
@@ -23,6 +25,13 @@ export class BootScene extends Phaser.Scene {
     this.textures.get('houses').add('row', 0, 17, 180, 2138, 360);
     this.createTextures();
     this.createPlayerAnimations();
+    this.anims.create({
+      key: 'alefaso-cry',
+      frames: this.anims.generateFrameNumbers('alefaso-maika', { start: 0, end: 11 }),
+      frameRate: 6,
+      repeat: -1,
+      repeatDelay: 0,
+    });
     this.scene.start('Travel');
   }
 
