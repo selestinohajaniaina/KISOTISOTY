@@ -8,6 +8,9 @@ const START_SPEED = 260;
 const MAX_SPEED = 620;
 const JUMP_SPEED = 700;
 const PLAYER_SCALE = 0.19;
+const HOUSES_HEIGHT = 180;
+const HOUSES_SCROLL_FACTOR = 0.2;
+const STREET_OBSTACLES = ['dog', 'taxi', 'scooter', 'hen', 'basin'];
 type RunState = 'ready' | 'running' | 'over';
 
 export class TravelScene extends Phaser.Scene {
@@ -16,8 +19,7 @@ export class TravelScene extends Phaser.Scene {
   private hazards!: Phaser.Physics.Arcade.Group;
   private platforms!: Phaser.Physics.Arcade.Group;
   private decorations!: Phaser.GameObjects.Group;
-  private background!: Phaser.GameObjects.TileSprite;
-  private plants!: Phaser.GameObjects.TileSprite;
+  private houses!: Phaser.GameObjects.TileSprite;
   private grass!: Phaser.GameObjects.TileSprite;
   private scoreText!: Phaser.GameObjects.Text;
   private messageText!: Phaser.GameObjects.Text;
@@ -54,8 +56,7 @@ export class TravelScene extends Phaser.Scene {
     this.speed = Math.min(MAX_SPEED, START_SPEED + this.distance * 0.035);
     this.distance += this.speed * seconds;
     this.spawnDistance -= this.speed * seconds;
-    this.background.tilePositionX += this.speed * seconds * 0.05;
-    this.plants.tilePositionX += this.speed * seconds * 0.2;
+    this.houses.tilePositionX += this.speed * seconds * HOUSES_SCROLL_FACTOR;
     this.grass.tilePositionX += this.speed * seconds * 1.1;
     this.moveCourse(this.hazards, seconds);
     this.moveCourse(this.platforms, seconds);
@@ -70,11 +71,11 @@ export class TravelScene extends Phaser.Scene {
   }
 
   private createEnvironment(): void {
-    this.add.rectangle(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT, 0xbadca5).setDepth(-10);
-    this.add.circle(790, 104, 60, 0xffd166, 0.92).setDepth(-9);
-    this.add.circle(790, 104, 82, 0xffed9c, 0.18).setDepth(-9);
-    this.background = this.add.tileSprite(0, 0, WIDTH, HEIGHT, 'plants').setOrigin(0).setTileScale(2.4).setAlpha(0.18).setDepth(-8);
-    this.plants = this.add.tileSprite(0, GROUND_Y - 115, WIDTH, 120, 'plants').setOrigin(0).setAlpha(0.86).setDepth(-4);
+    this.add.image(0, 0, 'rova').setOrigin(0).setDisplaySize(WIDTH, HEIGHT).setDepth(-10);
+    this.houses = this.add.tileSprite(0, GROUND_Y, WIDTH, HOUSES_HEIGHT, 'houses', 'row')
+      .setOrigin(0, 1)
+      .setTileScale(HOUSES_HEIGHT / this.textures.getFrame('houses', 'row').height)
+      .setDepth(-4);
     this.grass = this.add.tileSprite(0, GROUND_Y - 34, WIDTH, 48, 'grass').setOrigin(0).setDepth(4);
     this.add.rectangle(WIDTH / 2, GROUND_Y + 46, WIDTH, 92, 0x9f4728).setDepth(0);
     this.add.rectangle(WIDTH / 2, GROUND_Y + 5, WIDTH, 10, 0xc96535).setDepth(1);
@@ -102,6 +103,7 @@ export class TravelScene extends Phaser.Scene {
     this.physics.resume();
     this.state = 'ready';
     this.distance = 0;
+    this.houses.tilePositionX = 0;
     this.speed = START_SPEED;
     this.spawnDistance = 500;
     this.lives = 3;
@@ -135,16 +137,18 @@ export class TravelScene extends Phaser.Scene {
   private spawnSequence(): void {
     const x = WIDTH + 100;
     const pattern = Phaser.Math.Between(0, 3);
-    if (pattern === 0) { this.addRock(x); this.addBush(x + 230); this.spawnDistance = 520; }
-    else if (pattern === 1) { this.addRock(x); this.addRock(x + 250); this.spawnDistance = 650; }
-    else if (pattern === 2) { this.addPlatform(x + 80, GROUND_Y - 115); this.addRock(x + 370); this.spawnDistance = 720; }
-    else { this.addBush(x); this.addRock(x + 180); this.addBush(x + 390); this.spawnDistance = 690; }
+    if (pattern === 0) { this.addObstacle(x); this.addBush(x + 230); this.spawnDistance = 520; }
+    else if (pattern === 1) { this.addObstacle(x); this.addObstacle(x + 250); this.spawnDistance = 650; }
+    else if (pattern === 2) { this.addPlatform(x + 80, GROUND_Y - 115); this.addObstacle(x + 370); this.spawnDistance = 720; }
+    else { this.addBush(x); this.addObstacle(x + 180); this.addBush(x + 390); this.spawnDistance = 690; }
   }
 
-  private addRock(x: number): void {
-    const rock = this.hazards.create(x, GROUND_Y, 'rock') as Phaser.Physics.Arcade.Sprite;
-    rock.setOrigin(0.5, 1).setDepth(6);
-    rock.body?.setSize(58, 45).setOffset(7, 10);
+  private addObstacle(x: number): void {
+    const texture = Phaser.Utils.Array.GetRandom(STREET_OBSTACLES);
+    const obstacle = this.hazards.create(x, GROUND_Y, texture) as Phaser.Physics.Arcade.Sprite;
+    obstacle.setOrigin(0.5, 1).setDepth(6);
+    const topInset = texture === 'basin' ? 8 : 10;
+    obstacle.body?.setSize(obstacle.width - 12, obstacle.height - topInset).setOffset(6, topInset);
   }
 
   private addPlatform(x: number, y: number): void {

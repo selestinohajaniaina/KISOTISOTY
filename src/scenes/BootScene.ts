@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
-import idleUrl from '../assets/datoa/Idle.png';
-import jumpUrl from '../assets/datoa/Jump.png';
-import runUrl from '../assets/datoa/Run.png';
+import idleUrl from '../assets/sprite/datoa/Idle.png';
+import jumpUrl from '../assets/sprite/datoa/Jump.png';
+import runUrl from '../assets/sprite/datoa/Run.png';
+import housesUrl from '../assets/backgrounds/maisons-antananarivo-panoramique.png';
+import rovaUrl from '../assets/backgrounds/rova-cartoon-background.png';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -9,12 +11,16 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
+    this.load.image('houses', housesUrl);
+    this.load.image('rova', rovaUrl);
     this.load.spritesheet('original-idle', idleUrl, { frameWidth: 512, frameHeight: 512 });
     this.load.spritesheet('original-run', runUrl, { frameWidth: 512, frameHeight: 512 });
     this.load.spritesheet('original-jump', jumpUrl, { frameWidth: 512, frameHeight: 512 });
   }
 
   create(): void {
+    // Exclude the transparent margins so each row meets the next at street level.
+    this.textures.get('houses').add('row', 0, 17, 180, 2138, 360);
     this.createTextures();
     this.createPlayerAnimations();
     this.scene.start('Travel');
@@ -52,10 +58,48 @@ export class BootScene extends Phaser.Scene {
     graphics.generateTexture('runner', 64, 88);
     graphics.clear();
 
-    graphics.fillStyle(0x543e35).fillTriangle(2, 54, 25, 8, 45, 54).fillTriangle(24, 54, 48, 2, 70, 54);
-    graphics.fillStyle(0xb19a80).fillTriangle(10, 48, 25, 14, 36, 48);
-    graphics.fillStyle(0x8f7868).fillTriangle(35, 47, 49, 9, 61, 47);
-    graphics.generateTexture('rock', 72, 56);
+    graphics.fillStyle(0x815033).fillRoundedRect(13, 20, 38, 20, 8);
+    graphics.lineStyle(5, 0x815033).lineBetween(15, 25, 4, 15);
+    graphics.fillStyle(0x815033).fillRect(17, 34, 7, 16).fillRect(39, 34, 7, 16);
+    graphics.fillStyle(0xbe8050).fillCircle(49, 19, 13).fillEllipse(58, 25, 16, 11);
+    graphics.fillStyle(0x543323).fillEllipse(43, 18, 9, 15);
+    graphics.fillStyle(0x292329).fillCircle(53, 17, 2).fillCircle(63, 23, 3);
+    graphics.generateTexture('dog', 68, 50);
+    graphics.clear();
+
+    graphics.fillStyle(0xffc143).fillRoundedRect(1, 24, 94, 22, 7);
+    graphics.fillStyle(0xf6a323).fillRoundedRect(21, 8, 57, 25, 8).fillRoundedRect(42, 1, 16, 10, 3);
+    graphics.fillStyle(0x416576).fillRoundedRect(25, 12, 22, 14, 3).fillRoundedRect(51, 12, 23, 14, 3);
+    graphics.fillStyle(0x3a3030).fillRect(3, 34, 90, 4).fillCircle(23, 43, 10).fillCircle(75, 43, 10);
+    graphics.fillStyle(0xded7c9).fillCircle(23, 43, 4).fillCircle(75, 43, 4);
+    graphics.fillStyle(0xfff0c0).fillRoundedRect(2, 28, 8, 6, 2);
+    graphics.generateTexture('taxi', 96, 53);
+    graphics.clear();
+
+    graphics.fillStyle(0x303038).fillCircle(13, 40, 10).fillCircle(60, 40, 10);
+    graphics.fillStyle(0xdacfd0).fillCircle(13, 40, 4).fillCircle(60, 40, 4);
+    graphics.lineStyle(5, 0x655358).lineBetween(13, 40, 23, 10).lineBetween(23, 10, 31, 10);
+    graphics.fillStyle(0x3c9e9e).fillRoundedRect(15, 23, 15, 17, 6).fillRoundedRect(23, 34, 35, 7, 3);
+    graphics.fillStyle(0x3c9e9e).fillEllipse(55, 30, 27, 18);
+    graphics.fillStyle(0x49353c).fillRoundedRect(42, 19, 22, 7, 3);
+    graphics.fillStyle(0xffedba).fillCircle(20, 22, 4);
+    graphics.generateTexture('scooter', 72, 50);
+    graphics.clear();
+
+    graphics.lineStyle(3, 0xda8528).lineBetween(19, 30, 18, 42).lineBetween(27, 30, 27, 42);
+    graphics.fillStyle(0xe9b77d).fillTriangle(14, 28, 3, 13, 22, 20);
+    graphics.fillStyle(0xffebc4).fillEllipse(23, 25, 30, 22).fillCircle(32, 14, 9);
+    graphics.fillStyle(0xd94737).fillCircle(30, 5, 3).fillCircle(35, 6, 3);
+    graphics.fillStyle(0xe89a38).fillTriangle(39, 13, 46, 16, 39, 19);
+    graphics.fillStyle(0x382b2a).fillCircle(34, 13, 2);
+    graphics.generateTexture('hen', 47, 42);
+    graphics.clear();
+
+    graphics.fillStyle(0x337b92).fillRoundedRect(5, 12, 42, 21, 9);
+    graphics.fillStyle(0x64b9c0).fillEllipse(26, 13, 51, 17);
+    graphics.fillStyle(0x285971).fillEllipse(26, 13, 42, 11);
+    graphics.fillStyle(0x8ed1cc).fillEllipse(26, 16, 33, 5);
+    graphics.generateTexture('basin', 52, 34);
     graphics.clear();
 
     graphics.fillStyle(0x6b321f).fillRect(0, 0, 170, 30);
@@ -79,9 +123,6 @@ export class BootScene extends Phaser.Scene {
     graphics.generateTexture('grass', 256, 48);
     graphics.clear();
 
-    graphics.fillStyle(0x3d713f).fillCircle(44, 78, 42).fillCircle(98, 57, 55).fillCircle(156, 80, 45);
-    graphics.fillStyle(0x57904b).fillCircle(70, 55, 29).fillCircle(130, 50, 32);
-    graphics.generateTexture('plants', 200, 120);
     graphics.destroy();
   }
 }
