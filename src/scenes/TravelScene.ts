@@ -3,11 +3,11 @@ import Phaser from 'phaser';
 const WIDTH = 960;
 const HEIGHT = 540;
 const GROUND_Y = 448;
-const PLAYER_X = 40;
+const PLAYER_X = 60;
 const START_SPEED = 260;
 const MAX_SPEED = 620;
 const JUMP_SPEED = 700;
-const PLAYER_SCALE = 0.15;
+const PLAYER_SCALE = 0.19;
 type RunState = 'ready' | 'running' | 'over';
 
 export class TravelScene extends Phaser.Scene {

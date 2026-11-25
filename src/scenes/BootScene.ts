@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
-import idleUrl from '../assets/original/Idle.png';
-import jumpUrl from '../assets/original/Jump.png';
-import runUrl from '../assets/original/Run.png';
+import idleUrl from '../assets/datoa/Idle.png';
+import jumpUrl from '../assets/datoa/Jump.png';
+import runUrl from '../assets/datoa/Run.png';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
