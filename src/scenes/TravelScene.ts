@@ -3,11 +3,11 @@ import Phaser from 'phaser';
 const WIDTH = 960;
 const HEIGHT = 540;
 const GROUND_Y = 448;
-const PLAYER_X = 190;
+const PLAYER_X = 40;
 const START_SPEED = 260;
 const MAX_SPEED = 620;
 const JUMP_SPEED = 700;
-const PLAYER_SCALE = 0.24;
+const PLAYER_SCALE = 0.15;
 type RunState = 'ready' | 'running' | 'over';
 
 export class TravelScene extends Phaser.Scene {
@@ -106,7 +106,7 @@ export class TravelScene extends Phaser.Scene {
     this.spawnDistance = 500;
     this.lives = 3;
     this.invincible = false;
-    this.player.clearTint().setAlpha(1).setVelocity(0).setPosition(PLAYER_X, GROUND_Y - 56);
+    this.player.clearTint().setAlpha(1).setVelocity(0).setPosition(PLAYER_X, GROUND_Y - 42);
     this.playAnimation('original-idle');
     this.hazards.clear(true, true);
     this.platforms.clear(true, true);
