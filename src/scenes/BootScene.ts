@@ -41,8 +41,8 @@ export class BootScene extends Phaser.Scene {
     });
     this.anims.create({
       key: 'original-jump',
-      frames: this.anims.generateFrameNumbers('original-jump', { start: 0, end: 10 }),
-      frameRate: 14,
+      frames: this.anims.generateFrameNumbers('original-jump', { start: 0, end: 7 }),
+      frameRate: 6,
       repeat: 0,
     });
   }
