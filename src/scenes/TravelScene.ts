@@ -7,6 +7,7 @@ const PLAYER_X = 190;
 const START_SPEED = 260;
 const MAX_SPEED = 620;
 const JUMP_SPEED = 700;
+const PLAYER_SCALE = 0.24;
 type RunState = 'ready' | 'running' | 'over';
 
 export class TravelScene extends Phaser.Scene {
@@ -65,11 +66,7 @@ export class TravelScene extends Phaser.Scene {
     }
     if (this.spawnDistance <= 0) this.spawnSequence();
     this.scoreText.setText(`SCORE ${String(Math.floor(this.distance / 10)).padStart(5, '0')}`);
-    if (this.isGrounded()) {
-      this.player.setAngle(0).setScale(1, 1 + Math.sin(this.time.now * 0.025) * 0.035);
-    } else {
-      this.player.setScale(1).setAngle(Phaser.Math.Clamp(this.player.body!.velocity.y * 0.025, -10, 12));
-    }
+    if (this.isGrounded()) this.playAnimation('original-run');
   }
 
   private createEnvironment(): void {
@@ -86,8 +83,8 @@ export class TravelScene extends Phaser.Scene {
   }
 
   private createPlayer(): void {
-    this.player = this.physics.add.sprite(PLAYER_X, GROUND_Y, 'runner').setOrigin(0.5, 1).setDepth(7);
-    this.player.body?.setSize(42, 76).setOffset(11, 10);
+    this.player = this.physics.add.sprite(PLAYER_X, GROUND_Y, 'original-idle').setDepth(7).setScale(PLAYER_SCALE);
+    this.player.body?.setSize(210, 380).setOffset(151, 110);
     this.player.setCollideWorldBounds(true);
   }
 
@@ -109,7 +106,8 @@ export class TravelScene extends Phaser.Scene {
     this.spawnDistance = 500;
     this.lives = 3;
     this.invincible = false;
-    this.player.clearTint().setAlpha(1).setVelocity(0).setPosition(PLAYER_X, GROUND_Y);
+    this.player.clearTint().setAlpha(1).setVelocity(0).setPosition(PLAYER_X, GROUND_Y - 56);
+    this.playAnimation('original-idle');
     this.hazards.clear(true, true);
     this.platforms.clear(true, true);
     this.decorations.clear(true, true);
@@ -121,13 +119,17 @@ export class TravelScene extends Phaser.Scene {
   private start(): void {
     this.state = 'running';
     this.messageText.setVisible(false);
+    this.playAnimation('original-run');
     this.spawnSequence();
   }
 
   private handleAction(): void {
     if (this.state === 'ready') return this.start();
     if (this.state === 'over') { this.reset(); this.start(); return; }
-    if (this.isGrounded()) this.player.setVelocityY(-JUMP_SPEED);
+    if (this.isGrounded()) {
+      this.player.setVelocityY(-JUMP_SPEED);
+      this.playAnimation('original-jump');
+    }
   }
 
   private spawnSequence(): void {
@@ -179,6 +181,7 @@ export class TravelScene extends Phaser.Scene {
     if (this.lives <= 0) {
       this.state = 'over';
       this.physics.pause();
+      this.playAnimation('original-idle');
       const score = Math.floor(this.distance / 10);
       const best = Math.max(score, Number(localStorage.getItem('kisotisoty-best') ?? 0));
       localStorage.setItem('kisotisoty-best', String(best));
@@ -196,5 +199,9 @@ export class TravelScene extends Phaser.Scene {
 
   private isGrounded(): boolean {
     return Boolean(this.player.body?.blocked.down || this.player.body?.touching.down);
+  }
+
+  private playAnimation(key: string): void {
+    if (this.player.anims.currentAnim?.key !== key) this.player.play(key);
   }
 }

@@ -1,13 +1,44 @@
 import Phaser from 'phaser';
+import idleUrl from '../assets/original/Idle.png';
+import jumpUrl from '../assets/original/Jump.png';
+import runUrl from '../assets/original/Run.png';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('Boot');
   }
 
+  preload(): void {
+    this.load.spritesheet('original-idle', idleUrl, { frameWidth: 512, frameHeight: 512 });
+    this.load.spritesheet('original-run', runUrl, { frameWidth: 512, frameHeight: 512 });
+    this.load.spritesheet('original-jump', jumpUrl, { frameWidth: 512, frameHeight: 512 });
+  }
+
   create(): void {
     this.createTextures();
+    this.createPlayerAnimations();
     this.scene.start('Travel');
+  }
+
+  private createPlayerAnimations(): void {
+    this.anims.create({
+      key: 'original-idle',
+      frames: this.anims.generateFrameNumbers('original-idle', { start: 0, end: 1 }),
+      frameRate: 2,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: 'original-run',
+      frames: this.anims.generateFrameNumbers('original-run', { start: 0, end: 3 }),
+      frameRate: 11,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: 'original-jump',
+      frames: this.anims.generateFrameNumbers('original-jump', { start: 0, end: 10 }),
+      frameRate: 14,
+      repeat: 0,
+    });
   }
 
   private createTextures(): void {
