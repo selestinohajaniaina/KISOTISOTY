@@ -8,9 +8,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>KISOTISOTY</title>
+    <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <main id="game" aria-label="Jeu KISOTISOTY"></main>
+    <div id="game-loading">
+      <div class="loading-panel">
+        <h1>KISOTISOTY</h1>
+        <p id="loading-status" role="status">Chargement du jeu..</p>
+        <progress id="loading-progress" max="1" aria-label="Progression du chargement"></progress>
+        <button id="loading-retry" type="button" hidden>Réessayer</button>
+      </div>
+    </div>
     <div id="rotate-hint" aria-hidden="true">
       <span>↻</span>
       <p>Tourne ton téléphone en mode paysage</p>

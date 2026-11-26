@@ -50,12 +50,13 @@ export class TravelScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-UP', this.handleAction, this);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.input.off('pointerdown', this.handleAction, this));
     this.reset();
+    document.getElementById('game-loading')?.remove();
   }
 
   update(_time: number, delta: number): void {
     if (this.state !== 'running') return;
     const seconds = Math.min(delta, 50) / 1000;
-    this.speed = Math.min(MAX_SPEED, START_SPEED + this.distance * 0.005);
+    this.speed = Math.min(MAX_SPEED, START_SPEED + this.distance * 0.015);
     this.distance += this.speed * seconds;
     this.spawnDistance -= this.speed * seconds;
     this.houses.tilePositionX += this.speed * seconds * HOUSES_SCROLL_FACTOR;

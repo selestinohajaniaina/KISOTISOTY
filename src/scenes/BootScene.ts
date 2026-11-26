@@ -7,11 +7,20 @@ import rovaUrl from '../assets/backgrounds/rova-cartoon-background.png';
 import alefasoUrl from '../assets/decors/alefaso-maika.png';
 
 export class BootScene extends Phaser.Scene {
+  private loadFailed = false;
+
   constructor() {
     super('Boot');
   }
 
   preload(): void {
+    const progress = document.querySelector<HTMLProgressElement>('#loading-progress');
+    this.load.on(Phaser.Loader.Events.PROGRESS, (value: number) => {
+      if (progress) progress.value = value;
+    });
+    this.load.once(Phaser.Loader.Events.FILE_LOAD_ERROR, () => {
+      this.loadFailed = true;
+    });
     this.load.spritesheet('alefaso-maika', alefasoUrl, { frameWidth: 512, frameHeight: 512, endFrame: 11 });
     this.load.image('houses', housesUrl);
     this.load.image('rova', rovaUrl);
@@ -21,6 +30,17 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
+    if (this.loadFailed) {
+      const status = document.getElementById('loading-status');
+      const retry = document.querySelector<HTMLButtonElement>('#loading-retry');
+      if (status) status.textContent = 'Le jeu n’a pas pu être chargé.';
+      document.getElementById('loading-progress')?.remove();
+      if (retry) {
+        retry.hidden = false;
+        retry.addEventListener('click', () => location.reload(), { once: true });
+      }
+      return;
+    }
     // Exclude the transparent margins so each row meets the next at street level.
     this.textures.get('houses').add('row', 0, 17, 180, 2138, 360);
     this.createTextures();

@@ -31,6 +31,44 @@ body {
   touch-action: none;
 }
 
+#game-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: radial-gradient(ellipse at 50% 38%, #294a58, #101b26 72%);
+  text-align: center;
+}
+
+.loading-panel {
+  width: min(100%, 24rem);
+}
+
+.loading-panel h1 {
+  margin: 0;
+  color: #fff4c2;
+  font: 700 clamp(2rem, 8vw, 3.5rem) monospace;
+}
+
+.loading-panel progress {
+  width: 100%;
+  height: 0.875rem;
+  accent-color: #f2bd55;
+}
+
+.loading-panel button {
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: #f2bd55;
+  color: #101b26;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 #rotate-hint {
   position: fixed;
   inset: 0;
