@@ -8,6 +8,7 @@ const START_SPEED = 260;
 const MAX_SPEED = 620;
 const JUMP_SPEED = 700;
 const PLAYER_SCALE = 0.19;
+const OBSTACLE_SCALE = 0.75;
 const HOUSES_HEIGHT = 180;
 const HOUSES_SCROLL_FACTOR = 0.2;
 const STREET_OBSTACLES = ['dog', 'taxi', 'scooter', 'hen', 'basin'];
@@ -54,7 +55,7 @@ export class TravelScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     if (this.state !== 'running') return;
     const seconds = Math.min(delta, 50) / 1000;
-    this.speed = Math.min(MAX_SPEED, START_SPEED + this.distance * 0.035);
+    this.speed = Math.min(MAX_SPEED, START_SPEED + this.distance * 0.005);
     this.distance += this.speed * seconds;
     this.spawnDistance -= this.speed * seconds;
     this.houses.tilePositionX += this.speed * seconds * HOUSES_SCROLL_FACTOR;
@@ -77,7 +78,10 @@ export class TravelScene extends Phaser.Scene {
       .setOrigin(0, 1)
       .setTileScale(HOUSES_HEIGHT / this.textures.getFrame('houses', 'row').height)
       .setDepth(-4);
-    this.grass = this.add.tileSprite(0, GROUND_Y - 34, WIDTH, 48, 'grass').setOrigin(0).setDepth(4);
+    this.grass = this.add.tileSprite(0, GROUND_Y + 8, WIDTH, 48, 'grass')
+      .setOrigin(0, 1)
+      .setScale(1, 0.55)
+      .setDepth(4);
     this.add.rectangle(WIDTH / 2, GROUND_Y + 46, WIDTH, 92, 0x9f4728).setDepth(0);
     this.add.rectangle(WIDTH / 2, GROUND_Y + 5, WIDTH, 10, 0xc96535).setDepth(1);
     this.ground = this.add.rectangle(WIDTH / 2, GROUND_Y + 16, WIDTH, 32, 0x000000, 0);
@@ -120,7 +124,7 @@ export class TravelScene extends Phaser.Scene {
     this.decorations.clear(true, true);
     this.updateHearts();
     this.scoreText.setText('SCORE 00000');
-    this.messageText.setText('PRÊT POUR LE VOYAGE ?\nTOUCHE L’ÉCRAN POUR COMMENCER').setVisible(true);
+    this.messageText.setText('TOUCHE L’ÉCRAN OU ESPACE POUR SAUTER ?\nTOUCHE L’ÉCRAN POUR COMMENCER').setVisible(true);
     this.cryDecor.setVisible(true).play('alefaso-cry');
   }
 
@@ -153,19 +157,19 @@ export class TravelScene extends Phaser.Scene {
   private addObstacle(x: number): void {
     const texture = Phaser.Utils.Array.GetRandom(STREET_OBSTACLES);
     const obstacle = this.hazards.create(x, GROUND_Y, texture) as Phaser.Physics.Arcade.Sprite;
-    obstacle.setOrigin(0.5, 1).setDepth(6);
+    obstacle.setOrigin(0.5, 1).setScale(OBSTACLE_SCALE).setDepth(6);
     const topInset = texture === 'basin' ? 8 : 10;
     obstacle.body?.setSize(obstacle.width - 12, obstacle.height - topInset).setOffset(6, topInset);
   }
 
   private addPlatform(x: number, y: number): void {
     const platform = this.platforms.create(x, y, 'platform') as Phaser.Physics.Arcade.Sprite;
-    platform.setOrigin(0.5, 0).setDepth(5);
+    platform.setOrigin(0.5, 0).setScale(OBSTACLE_SCALE).setDepth(5);
     platform.body?.setSize(170, 18).setOffset(0, 0);
   }
 
   private addBush(x: number): void {
-    this.decorations.add(this.add.image(x, GROUND_Y, 'bush').setOrigin(0.5, 1).setDepth(3));
+    this.decorations.add(this.add.image(x, GROUND_Y, 'bush').setOrigin(0.5, 1).setScale(OBSTACLE_SCALE).setDepth(3));
   }
 
   private moveCourse(group: Phaser.Physics.Arcade.Group, seconds: number): void {
@@ -196,7 +200,7 @@ export class TravelScene extends Phaser.Scene {
       const score = Math.floor(this.distance / 10);
       const best = Math.max(score, Number(localStorage.getItem('kisotisoty-best') ?? 0));
       localStorage.setItem('kisotisoty-best', String(best));
-      this.messageText.setText(`FIN DU VOYAGE\nSCORE ${score}  •  RECORD ${best}\n\nTOUCHE POUR REJOUER`).setVisible(true);
+      this.messageText.setText(`VIE ÉCOULÉ\nSCORE ${score}  •  RECORD ${best}\n\nTOUCHE POUR REJOUER`).setVisible(true);
       this.cryDecor.setVisible(true).play('alefaso-cry');
       return;
     }
